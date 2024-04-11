@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
@@ -13,7 +12,7 @@ namespace WeatherApp
         {
             public string Name { get; set; }
             public MainData Main { get; set; }
-            public List<WeatherInformation> Weather { get; set; }
+            public WeatherInformation[] Weather { get; set; }
         }
 
         public class MainData
@@ -29,71 +28,69 @@ namespace WeatherApp
         public MainPage()
         {
             InitializeComponent();
+            GetWeatherForCurrentLocation();
         }
 
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            await GetLocationAndWeatherData();
-        }
-
-        private async Task GetLocationAndWeatherData()
-        {
-            try
-            {
-                var location = await Geolocation.GetLocationAsync();
-                if (location != null)
-                {
-                    latitude = location.Latitude;
-                    longitude = location.Longitude;
-                    await GetWeatherData();
-                }
-                else
-                {
-                    City.Text = "Unable to get location.";
-                    Temperature.Text = "";
-                    WeatherDescriptionLabel.Text = "";
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                City.Text = "Unable to get location.";
-                Temperature.Text = "";
-                WeatherDescriptionLabel.Text = "";
-
-            }
-        }
-
-        private async Task GetWeatherData()
+        private async Task GetWeatherData(string location)
         {
             try
             {
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                string url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&units=metric&appid=5d6f986b199000e8861e011bdd4054e7";
+                string url = $"https://api.openweathermap.org/data/2.5/weather?q={location}&units=metric&appid=5d6f986b199000e8861e011bdd4054e7";
 
                 var response = await client.GetStringAsync(url);
 
                 var weatherData = JsonConvert.DeserializeObject<OpenWeatherData>(response);
 
-                City.Text = weatherData.Name;
-                Temperature.Text = $"{weatherData.Main.Temp} °C";
-                WeatherDescriptionLabel.Text = weatherData.Weather[0].Description;
+                CityLabel.Text = $"City: {weatherData.Name}";
+                TemperatureLabel.Text = $"Temperature: {weatherData.Main.Temp} °C";
+                WeatherDescriptionLabel.Text = $"Weather Description: {weatherData.Weather[0].Description}";
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to fetch weather data: {ex.Message}");
+                CityLabel.Text = "Error fetching data";
+                TemperatureLabel.Text = "";
+                WeatherDescriptionLabel.Text = "";
             }
         }
 
-        private async void LocationBtn_Clicked(object sender, EventArgs e)
+        private async void GetWeatherButton_Clicked(object sender, EventArgs e)
         {
-            await GetLocationAndWeatherData();
+            string location = LocationEntry.Text;
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                await GetWeatherData(location);
+            }
+            else
+            {
+                await DisplayAlert("Error", "Please enter a city name.", "OK");
+            }
         }
 
-        private double latitude;
-        private double longitude;
+        private async void GetWeatherForCurrentLocation()
+        {
+            try
+            {
+                var location = await Geolocation.GetLocationAsync();
+                if (location != null)
+                {
+                    string latitude = location.Latitude.ToString();
+                    string longitude = location.Longitude.ToString();
+                    await GetWeatherData($"{latitude},{longitude}");
+                }
+                else
+                {
+                    await DisplayAlert("Error", "Unable to get current location.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                await DisplayAlert("Error", "Unable to get current location.", "OK");
+            }
+        }
     }
 }

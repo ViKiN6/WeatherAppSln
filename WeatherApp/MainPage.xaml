@@ -1,33 +1,24 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherApp.MainPage"
-             BackgroundColor="#F5F5F5">
+             BackgroundColor="White">
 
     <StackLayout Padding="20">
 
-        <!-- Title -->
         <Label Text="Weather App" FontSize="28" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center" Margin="0,20,0,30"/>
-
-        <!-- City -->
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Margin="0,0,0,10">
-            <Label Text="City:" FontSize="20" TextColor="Black" VerticalOptions="Center" FontAttributes="Bold"/>
-            <Label x:Name="City" FontSize="18" TextColor="#666666" VerticalOptions="Center"/>
+      
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Margin="0,0,0,10">
+            <Label Text="Location:" FontAttributes="Bold" FontSize="20" TextColor="Black" VerticalOptions="Center"/>
+            <Entry x:Name="LocationEntry" Placeholder="Enter City Name" FontSize="18" TextColor="Black" VerticalOptions="Center"/>
         </StackLayout>
-
-        <!-- Temperature -->
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Margin="0,0,0,10">
-            <Label Text="Temperature:" FontSize="20" TextColor="Black" VerticalOptions="Center" FontAttributes="Bold"/>
-            <Label x:Name="Temperature" FontSize="18" TextColor="#666666" VerticalOptions="Center"/>
+       
+        <Button Text="Get Weather" Clicked="GetWeatherButton_Clicked" FontSize="20" TextColor="White" BackgroundColor="#343566" CornerRadius="5" HorizontalOptions="Center" Padding="15,10" Margin="0,0,0,20"/>
+      
+        <StackLayout>
+            <Label x:Name="CityLabel" FontAttributes="Bold" FontSize="20" TextColor="Black" Margin="0,0,0,8"/>
+            <Label x:Name="TemperatureLabel" FontAttributes="Bold" FontSize="20" TextColor="Black" Margin="0,0,0,8"/>
+            <Label x:Name="WeatherDescriptionLabel" FontAttributes="Bold" FontSize="20" TextColor="Black" Margin="0,0,0,8"/>
         </StackLayout>
-
-        <!-- Weather Description -->
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Margin="0,0,0,30">
-            <Label Text="Weather Description:" FontSize="20" TextColor="Black" VerticalOptions="Center" FontAttributes="Bold"/>
-            <Label x:Name="WeatherDescriptionLabel" FontSize="18" TextColor="#666666" VerticalOptions="Center"/>
-        </StackLayout>
-
-        <!-- Refresh Button -->
-        <Button Text="Refresh Weather" Clicked="LocationBtn_Clicked" FontSize="18" TextColor="White" BackgroundColor="#344345" CornerRadius="5" HorizontalOptions="Center" Padding="15,10" Margin="0,0,0,20"/>
 
     </StackLayout>
 
